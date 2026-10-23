@@ -4,7 +4,9 @@ A Java Android application for reducing household food waste. Users record ingre
 
 ## Current project status
 
-This is a prepared starter project, **not yet a verified final submission**. The code includes the five required Activities, SQLite data layer, pantry list/custom adapters, strict-matching utility and unit tests. The Android Gradle build, APK launch, Android database CRUD/persistence, visual UI behavior and emulator/device behavior were not verified in the preparation environment. Run the build and all applicable manual checks before making claims about the app.
+Automated checks were run in this workspace on 2026-10-23 with Gradle 8.7, Temurin JDK 21.0.8, Android SDK Platform 35 and Build Tools 34.0.0. `python docs\validate_project.py` passed; `.\gradlew.bat testDebugUnitTest assembleDebug` passed with all 14 strict-matching unit tests passing and produced the debug APK; `.\gradlew.bat lintDebug` completed with 98 warnings. Manual checks on the `Medium_Phone_API_37.0` emulator also observed app launch, zero-match behavior, navigation, recipe details, pantry add/edit/delete and persistence, strict-match inclusion/exclusion, and display of a `0.001 kg` quantity without rounding it to zero. These checks are partial; see `docs/TESTING_CHECKLIST.md` and `docs/STATUS_BEFORE_SUBMISSION.md` for tested cases and remaining work. This is not yet a verified final submission.
+
+The Android SDK location is machine-specific. Keep it in the ignored `local.properties` file (or let Android Studio create that file); never commit that path.
 
 ## Requirements
 
@@ -83,7 +85,7 @@ SmartPantryManager/
 
 ## Manual tests and evidence
 
-See [`docs/TESTING_CHECKLIST.md`](docs/TESTING_CHECKLIST.md), [`docs/SUBMISSION_CHECKLIST.md`](docs/SUBMISSION_CHECKLIST.md), and [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md). Every manual result must remain “Not yet run” until actually observed. Record the real device/emulator and API version when testing. Screenshots for the report must come from the running app, not mockups or placeholders.
+See [`docs/TESTING_CHECKLIST.md`](docs/TESTING_CHECKLIST.md), [`docs/SUBMISSION_CHECKLIST.md`](docs/SUBMISSION_CHECKLIST.md), and [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md). Mark manual results only after they are actually observed and record the real device/emulator and API version. Screenshots for the report must come from the running app, not mockups or placeholders.
 
 ## GitHub and academic integrity
 
