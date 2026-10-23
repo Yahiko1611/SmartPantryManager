@@ -283,19 +283,18 @@ add_code_box('''public long insertPantryItem(String name, double quantity, Strin
 para('Explanation: the method builds ContentValues for a new pantry row and inserts it into the SQLite table. It trims the name, normalises the unit and stores a blank expiry date as SQL NULL. The companion read, update and delete methods complete the CRUD set.')
 doc.add_page_break()
 heading('4.2 Strict matching',2)
-add_code_box('''for (RecipeIngredient required : getIngredientsForRecipe(recipe.getId())) {
-    IngredientNormalizer.Measure measure = IngredientNormalizer.toMeasure(
-        required.getQuantity(), required.getUnit());
-    String key = IngredientNormalizer.normalizeName(required.getName())
-        + "|" + measure.family;
-    double actual = available.containsKey(key) ? available.get(key) : 0.0;
-    if (actual + 0.000001 < measure.baseQuantity) {
-        allAvailable = false;
-        break;
+add_code_box('''public static boolean canMake(Map<String, Double> available, List<Line> required) {
+    if (required.isEmpty()) return false;
+    for (Line need : required) {
+        IngredientNormalizer.Measure m =
+            IngredientNormalizer.toMeasure(need.quantity, need.unit);
+        String key = IngredientNormalizer.normalizeName(need.name) + "|" + m.family;
+        Double have = available.get(key);
+        if (have == null || have + 0.000001 < m.baseQuantity) return false;
     }
-}
-if (allAvailable) suggestions.add(recipe);''')
-para('Explanation: each recipe requirement is compared with available pantry stock using a normalised ingredient key and a compatible measure family. The loop stops as soon as one ingredient is missing or below the required amount, preventing partial matches from entering the main suggestions list.')
+    return true;
+}''')
+para('Explanation: RecipeMatcher.canMake checks each required ingredient against available pantry stock using normalised names and compatible measurement families. It rejects an empty requirement list and returns false as soon as any ingredient is missing or insufficient, so partial matches are not suggested.')
 doc.add_page_break()
 heading('4.3 Quantity and unit normalisation',2)
 add_code_box('''public static Measure toMeasure(double quantity, String rawUnit) {
