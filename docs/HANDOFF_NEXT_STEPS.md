@@ -21,7 +21,7 @@ Never fabricate: screenshots, commits or commit dates, test results, personal de
 - The SDK is configured in ignored, machine-local `local.properties`; no SDK path is committed.
 
 ## Not yet verified
-- Non-numeric quantity validation, plural-name matching through the UI, and unit conversion through the UI. Zero and negative `-1` quantities were rejected on the API 37 emulator.
+- Non-numeric quantity entry remains unverified because the numeric keyboard accepts numeric input only. On the API 37 emulator, zero and negative `-1` were rejected; plural `tomatoes` matched `tomato`; `0.12 kg` met a `120 g` requirement, `0.1 kg` was insufficient, and `120 ml` did not satisfy a mass requirement. The original pantry row was restored after testing.
 - No Espresso/instrumented tests have been added or run.
 
 ## Emulator state
@@ -40,7 +40,7 @@ Never fabricate: screenshots, commits or commit dates, test results, personal de
 
 ## Remaining work, in priority order
 1. Finish the remaining form edge tests; results are tracked in `docs/TESTING_CHECKLIST.md`.
-2. Review the ten genuine incremental commits on GitHub and be ready to explain the changes. Do not fabricate any further history.
+2. Review the eleven genuine incremental commits on GitHub and be ready to explain the changes. Do not fabricate any further history.
 3. Review `SmartPantryManager_Report_Draft.docx`, generated at the repository root with the 14 actual emulator screenshots in `docs/evidence/`. To regenerate it, install `docs\report-requirements.txt` and run `python docs\generate_report.py`. It still requires the student's actual identity and signed declaration, genuine challenges/reflection, citation/page-number review and a final proofread.
 4. The student must record the narrated 5–7 minute MP4 using `docs/DEMO_SCRIPT.md`; the assistant cannot supply the student's voice or personal GitHub-history claims.
 5. Package the full project source (excluding generated `build/` and `.gradle/` caches), final report, and MP4 in one ZIP named `Studentnumber_Surname_MobileAppDev700_Assignment.zip` (<= 50 MB).
