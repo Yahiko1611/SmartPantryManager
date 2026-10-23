@@ -2,6 +2,7 @@
 .idea/
 /build/
 */build/
+*.apk
 local.properties
 /SmartPantryManager_Report_Draft.docx
 __pycache__/
