@@ -28,7 +28,7 @@ Never fabricate: screenshots, commits or commit dates, test results, personal de
 - Fresh app data on `Medium_Phone_API_37.0` showed an empty pantry. The app-created SQLite database contained 20 recipes, 84 recipe-ingredient rows, instructions for every recipe, and no duplicate recipe names; counts were unchanged after another launch.
 - Observed on-device: add/edit/delete/cancel, blank-name/zero-quantity/malformed-expiry validation, settings persistence, expiry alert banner toggle, detail/navigation, strict match include/exclude/restore, duplicate pantry rows summed, extra quantity still matching, and persistence after force-stop/relaunch.
 - The fractional display fix was verified on the emulator: `0.001 kg` is displayed without rounding to `0 kg`.
-- The emulator currently contains five manually created pantry rows for the Tomato Egg Scramble scenario, including two `egg` rows of `1 pcs` each. Clear app data before capturing a clean empty-pantry screenshot. The scenario-by-scenario record is in `docs/TESTING_CHECKLIST.md`.
+- The emulator currently contains seven test pantry rows, including two `egg` rows of `1 pcs` each plus temporary expiry/fractional-quantity test items. The scenario-by-scenario record is in `docs/TESTING_CHECKLIST.md`.
 
 ## Known risks to check first when building
 - Spinner dropdown arrow: fixed with bg_spinner.xml (layer-list + vector arrow). Visually UNVERIFIED, check on an emulator.
@@ -40,7 +40,7 @@ Never fabricate: screenshots, commits or commit dates, test results, personal de
 
 ## Remaining work, in priority order
 1. Finish remaining form edge tests and verify a real rotation if feasible; mark results in `docs/TESTING_CHECKLIST.md`.
-2. Review the five new genuine audit commits on GitHub; make further commits only for distinct real work. The public repository currently has fewer than the required 10 incremental commits; do not fabricate the missing history.
-3. Complete the separate report draft, `SmartPantryManager_Report_Draft.docx`, with the student's actual identity, signed declaration, real app screenshots and genuine challenges/reflection. Keep the required Times New Roman 12 pt, 1.5 spacing, Harvard references, and update the strict-matching example to `RecipeMatcher.canMake()` if it is stale.
+2. Review the genuine audit commits on GitHub; make further commits only for distinct real work. The public repository currently has fewer than the required 10 incremental commits; do not fabricate the missing history.
+3. Review `SmartPantryManager_Report_Draft.docx`, generated at the repository root with the 14 actual emulator screenshots in `docs/evidence/`. To regenerate it, install `docs\report-requirements.txt` and run `python docs\generate_report.py`. It still requires the student's actual identity and signed declaration, genuine challenges/reflection, citation/page-number review and a final proofread.
 4. The student must record the narrated 5–7 minute MP4 using `docs/DEMO_SCRIPT.md`; the assistant cannot supply the student's voice or personal GitHub-history claims.
 5. Package the full project source (excluding generated `build/` and `.gradle/` caches), final report, and MP4 in one ZIP named `Studentnumber_Surname_MobileAppDev700_Assignment.zip` (<= 50 MB).

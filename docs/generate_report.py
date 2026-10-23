@@ -7,8 +7,9 @@ from docx.oxml.ns import qn
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = Path('/mnt/data/SmartPantryManager_Report_Draft.docx')
+OUT = ROOT / 'SmartPantryManager_Report_Draft.docx'
 DOCS = ROOT / 'docs'
+EVIDENCE = DOCS / 'evidence'
 
 doc = Document()
 sec = doc.sections[0]
@@ -126,37 +127,42 @@ def add_code_box(code):
         fmt_run(r, size=12, name='Times New Roman')
     doc.add_paragraph()
 
-def add_evidence_pair(left_title, left_caption, right_title, right_caption, page_num):
-    heading(f'5.{page_num} Evidence: {left_title} and {right_title}', 2)
+def add_evidence_pair(left, right, page_num):
+    heading(f'5.{page_num} Evidence: {left[0]} and {right[0]}', 2)
     table = doc.add_table(rows=1, cols=2)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
     widths = [Inches(3.15), Inches(3.15)]
-    for idx, (title, caption) in enumerate([(left_title,left_caption),(right_title,right_caption)]):
+    for idx, (title, caption, image_name) in enumerate([left, right]):
         cell = table.cell(0,idx)
         cell.width = widths[idx]
         cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.TOP
-        set_cell_shading(cell, 'FFF7E8')
-        set_cell_border(cell, 'D7B36A', '8')
         cell.text = ''
         p = cell.paragraphs[0]
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p.paragraph_format.line_spacing = 1.5
         fmt_run(p.add_run(title), bold=True, size=12)
-        p2 = cell.add_paragraph()
-        p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p2.paragraph_format.line_spacing = 1.5
-        fmt_run(p2.add_run(caption), italic=True, size=12)
-        p3 = cell.add_paragraph()
-        p3.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p3.paragraph_format.line_spacing = 1.5
-        p3.paragraph_format.space_before = Pt(110)
-        p3.paragraph_format.space_after = Pt(105)
-        fmt_run(p3.add_run('INSERT YOUR ACTUAL RUNNING-APP SCREENSHOT HERE'), bold=True, size=12, color=(133,86,20))
+        image_path = EVIDENCE / image_name
+        if image_path.is_file():
+            picture = cell.add_paragraph()
+            picture.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            picture.add_run().add_picture(str(image_path), width=Inches(2.25))
+        else:
+            set_cell_shading(cell, 'FFF7E8')
+            set_cell_border(cell, 'D7B36A', '8')
+            p2 = cell.add_paragraph()
+            p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p2.paragraph_format.line_spacing = 1.5
+            p2.paragraph_format.space_before = Pt(110)
+            p2.paragraph_format.space_after = Pt(105)
+            fmt_run(p2.add_run('SCREENSHOT NOT CAPTURED'), bold=True, size=12, color=(133,86,20))
+            p3 = cell.add_paragraph()
+            p3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            fmt_run(p3.add_run(f'Capture: docs/evidence/{image_name}'), italic=True, size=10, color=(133,86,20))
         p4 = cell.add_paragraph()
         p4.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p4.paragraph_format.line_spacing = 1.5
-        fmt_run(p4.add_run('Evidence placeholder only — replace before submission.'), italic=True, size=12, color=(133,86,20))
+        p4.paragraph_format.line_spacing = 1.2
+        fmt_run(p4.add_run(caption), italic=True, size=10)
     row = table.rows[0]
     trPr = row._tr.get_or_add_trPr()
     h = OxmlElement('w:trHeight'); h.set(qn('w:val'), str(int(5.15*1440))); h.set(qn('w:hRule'),'atLeast'); trPr.append(h)
@@ -183,7 +189,7 @@ fields = [
     ('Qualification / Year / Semester', '[Complete all applicable details]'),
     ('Assignment due date', '[Enter due date from Moodle]'),
     ('Date submitted', '[Complete on submission]'),
-    ('GitHub repository', '[Paste the real public repository URL after publishing]')
+    ('GitHub repository', 'https://github.com/Yahiko1611/SmartPantryManager')
 ]
 for i,(a,b) in enumerate(fields):
     t.cell(i,0).width=Inches(2.2); t.cell(i,1).width=Inches(4.1)
@@ -193,7 +199,7 @@ for i,(a,b) in enumerate(fields):
         c.vertical_alignment=WD_CELL_VERTICAL_ALIGNMENT.CENTER
         p=c.paragraphs[0]; p.paragraph_format.line_spacing=1.2
         fmt_run(p.add_run(value), bold=(j==0), size=12)
-para('WORKING REPORT DRAFT — replace every highlighted evidence placeholder, verify all implementation claims, enter personal details and update the GitHub URL before submission.', bold=True, align=WD_ALIGN_PARAGRAPH.CENTER)
+para('WORKING REPORT DRAFT — verify the claims and page numbers, enter your personal details, review and sign the declaration, and complete any remaining evidence before submission.', bold=True, align=WD_ALIGN_PARAGRAPH.CENTER)
 doc.add_page_break()
 
 # Declaration page
@@ -231,7 +237,7 @@ heading('1. Introduction',1)
 para('The Smart Pantry Manager is a Java-based Android application intended to help a household keep track of ingredients already available at home and find meals that can be prepared without buying additional ingredients. The practical assignment defines strict recipe matching as the core business rule: a recipe is suggested only when every required ingredient is present in the pantry in at least the required quantity (Richfield Graduate Institute of Technology, n.d.).')
 para('The primary users are people who want a simple way to monitor pantry ingredients, quantities and optional expiry dates. The app provides an ingredient list, add/edit form, suggested-recipes list, recipe detail screen and settings screen. It is designed for direct use on a mobile screen, with focused screens and simple navigation, consistent with the module guide’s discussion of mobile interface design, Activities, Layouts and Intents (Iversen and Eierman, 2020).')
 para('The implementation uses local SQLite storage so that pantry data is saved on the device and is available after the app is closed and reopened. The recipe catalogue is seeded on first database creation. The app does not use maps, GPS, location services, payments or grocery-store lookup because these features are explicitly outside the assignment scope (Richfield Graduate Institute of Technology, n.d.).')
-para('Report status: this document is a working draft prepared with the source project. The app has not been run in an Android emulator in the preparation environment. All test outcomes, code explanations, screenshots, challenges, reflection and repository details must be checked and completed by the student before submission.', italic=True)
+para('Verification status as of 23 October 2026: the Android Gradle unit-test/build task and source/resource validator passed; lint completed with warnings. On an API 37 emulator, fresh database creation produced 20 recipes and 84 ingredient rows, and the app was exercised for pantry operations, persistence, strict matching, validation, Settings and expiry reminders. Seven genuine audit commits are on the public repository branch, but the assignment requires at least 10 genuine incremental commits. The scenario-by-scenario evidence and remaining checks are in docs/TESTING_CHECKLIST.md. This is still a draft: the student must verify the report, supply personal details and signature, write a truthful personal reflection, and record the narrated video.', italic=True)
 
 heading('2. System Design',1)
 heading('2.1 Screen flow',2)
@@ -262,7 +268,7 @@ para('The database seed method inserts 20 recipes and their required ingredients
 heading('3.3 Input validation',2)
 para('The ingredient form rejects an empty name, a missing or non-numeric quantity, a quantity less than or equal to zero, and a malformed expiry date. The expiry date can be omitted. Input validation is important because the quantity is used directly in the matching comparison; invalid values could create misleading suggestions.')
 heading('3.4 Test status',2)
-para('All behaviours listed above are intended in the current source. They must be verified by running the application. Record actual results in the supplied manual checklist and update this report to distinguish confirmed results from any features that still need correction. Do not state that a test passed until it has been observed on an emulator or physical device.')
+para('The project was built and its 14 strict-matching unit tests passed. Source/resource validation also passed; Android lint completed with 98 warnings. On an API 37 emulator, first-run recipe seeding, persistence, pantry add/edit/delete, selected form validation, expiry alerts and strict matching were observed. Negative/non-numeric quantity entry, plural-name and unit-conversion UI cases, and a confirmed rotation test remain unverified. See docs/TESTING_CHECKLIST.md for the detailed results; do not treat this draft as a complete test report.')
 
 doc.add_page_break()
 heading('4. Key Code Snippets',1)
@@ -324,25 +330,27 @@ holder.delete.setOnClickListener(v -> listener.onDelete(item));''')
 para('Explanation: the Intent carries the selected database ID rather than copying the entire record between screens. The edit Activity retrieves the current item from SQLite. The custom adapter binds each record into its row and forwards Edit/Delete actions to the Activity.')
 
 heading('5. Screenshots of Outputs and Core Functions',1)
-para('The assignment requires genuine screenshots of every screen and key operation from the running application. The amber boxes below are evidence placeholders only; they are not screenshots and must not be submitted as evidence. Replace them with your own emulator/phone captures and retain a short caption explaining what each screenshot proves.')
+para('The evidence images are direct captures from the running API 37 emulator. Each caption states the visible behavior. Review each image against the final app version and replace any screenshot that does not meet the lecturer’s requirements.')
 evidence = [
-    ('Pantry list with saved ingredients','Shows the RecyclerView listing current records and their quantities/units.'),
-    ('Add ingredient form','Shows the form fields for name, quantity, unit and optional expiry date.'),
-    ('Validation error','Shows an actual validation response after attempting an invalid save.'),
-    ('Edit ingredient form','Shows an existing record loaded into the same form before editing.'),
-    ('Pantry after update','Shows the updated quantity/unit/expiry in the list without a duplicate row.'),
-    ('Delete confirmation','Shows the confirmation prompt before the selected record is removed.'),
-    ('Pantry after deletion','Shows that the deleted record is no longer listed.'),
-    ('Strict match included','Shows a recipe in Suggested Recipes when every ingredient and quantity is present.'),
-    ('Strict match excluded','Shows the same recipe absent after one ingredient is removed or falls below the required amount.'),
-    ('Recipe detail screen','Shows the full list of required ingredients and preparation steps.'),
-    ('Settings and expiry reminder','Shows saved settings and, if possible, the reminder behaviour for an item expiring soon.'),
-    ('Persistence after relaunch','Shows that pantry records remain after the app is closed and reopened.')
+    ('Pantry list with saved ingredients','Shows saved records, units and quantities.','pantry_list.png'),
+    ('Add ingredient form','Shows the name, quantity, unit and optional expiry controls.','add_form.png'),
+    ('Validation error','Shows the form response to an invalid save.','validation_error.png'),
+    ('Edit ingredient form','Shows an existing pantry item loaded for editing.','edit_form.png'),
+    ('Pantry after update','Shows saved values after editing.','pantry_after_update.png'),
+    ('Delete confirmation','Shows the prompt before deleting an item.','delete_confirmation.png'),
+    ('Pantry after deletion','Shows the item removed from the pantry.','pantry_after_deletion.png'),
+    ('Strict match included','Shows a recipe when all requirements are covered.','strict_match_included.png'),
+    ('Strict match excluded','Shows the no-match state after a required ingredient is removed.','strict_match_excluded.png'),
+    ('Recipe detail screen','Shows the recipe requirements and preparation steps.','recipe_detail.png'),
+    ('Settings screen','Shows the saved alert and default-unit preferences.','settings.png'),
+    ('Expiry reminder','Shows the pantry reminder for an item expiring within three days.','expiry_reminder.png'),
+    ('Fractional quantity display','Shows that `0.001 kg` is displayed accurately.','fractional_quantity.png'),
+    ('Persistence after relaunch','Shows saved pantry records after restarting the app.','persistence_relaunch.png')
 ]
 for k in range(0,len(evidence),2):
     doc.add_page_break()
-    a=evidence[k]; b=evidence[k+1] if k+1 < len(evidence) else ('Additional required screen','Insert any remaining core screen or function evidence.')
-    add_evidence_pair(a[0],a[1],b[0],b[1],1+(k//2))
+    a=evidence[k]; b=evidence[k+1] if k+1 < len(evidence) else ('Additional required screen','Insert any remaining core screen or function evidence.','additional.png')
+    add_evidence_pair(a,b,1+(k//2))
 
 doc.add_page_break()
 heading('6. Challenges and Solutions',1)

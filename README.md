@@ -87,6 +87,8 @@ SmartPantryManager/
 
 See [`docs/TESTING_CHECKLIST.md`](docs/TESTING_CHECKLIST.md), [`docs/SUBMISSION_CHECKLIST.md`](docs/SUBMISSION_CHECKLIST.md), and [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md). Mark manual results only after they are actually observed and record the real device/emulator and API version. Screenshots for the report must come from the running app, not mockups or placeholders.
 
+The audit's direct API 37 emulator captures are in [`docs/evidence/`](docs/evidence/). To regenerate the editable report draft on Windows, install its Python dependency with `python -m pip install -r docs\report-requirements.txt`, then run `python docs\generate_report.py`. The generator writes `SmartPantryManager_Report_Draft.docx` at the project root and embeds the available evidence images. It is a draft: enter your own details, sign the declaration yourself, check citations/page numbers, and write your own truthful reflection before submission.
+
 ## GitHub and academic integrity
 
 The brief calls for a public repository (or adding the marker as a collaborator if the lecturer permits a private repository) and at least 10 meaningful, genuine incremental commits with descriptive messages. The prepared source was not developed under GitHub from the start, so importing it in one commit cannot honestly prove the earlier development timeline. Do not backdate commits or create empty/fake commits. Commit real changes and tests as you inspect, fix and verify the project. The student must understand and be able to explain the code.

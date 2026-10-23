@@ -3,6 +3,8 @@
 /build/
 */build/
 local.properties
+/SmartPantryManager_Report_Draft.docx
+__pycache__/
 *.iml
 .DS_Store
 captures/
