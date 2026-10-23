@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import za.co.smartpantry.R;
 import za.co.smartpantry.model.PantryItem;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryViewHolder> {
     public interface Listener {
@@ -55,8 +55,7 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
     @Override public int getItemCount() { return items.size(); }
 
     public static String formatQuantity(double quantity) {
-        if (Math.abs(quantity - Math.rint(quantity)) < 0.000001) return String.format(Locale.ROOT, "%.0f", quantity);
-        return String.format(Locale.ROOT, "%.2f", quantity).replaceAll("0+$", "").replaceAll("\\.$", "");
+        return BigDecimal.valueOf(quantity).stripTrailingZeros().toPlainString();
     }
 
     static class PantryViewHolder extends RecyclerView.ViewHolder {
