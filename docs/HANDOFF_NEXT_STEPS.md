@@ -15,13 +15,13 @@ Never fabricate: screenshots, commits or commit dates, test results, personal de
 8. Added the Kotlin 1.8.22 BOM to align AndroidX's transitive Kotlin runtime and fix duplicate Kotlin stdlib classes during Android builds.
 
 ## Verified in this workspace (2026-10-23; JDK 21, Gradle 8.7, SDK Platform 35)
-- `.\gradlew.bat testDebugUnitTest assembleDebug` succeeded: 14/14 matcher tests passed, Android app compiled, and debug APK assembled.
+- `.\gradlew.bat testDebugUnitTest assembleDebug` succeeded: 16/16 matcher tests passed, Android app compiled, and debug APK assembled.
 - `.\gradlew.bat lintDebug` succeeded with 98 warnings; the report is `app/build/reports/lint-results-debug.html`.
 - `python docs\validate_project.py` succeeded: XML parses, resource references resolve, 20 seeds are present, no Kotlin, and normalizer smoke tests pass.
 - The SDK is configured in ignored, machine-local `local.properties`; no SDK path is committed.
 
 ## Not yet verified
-- Negative/non-numeric quantity validation, plural-name matching through the UI, and unit conversion through the UI.
+- Non-numeric quantity validation, plural-name matching through the UI, and unit conversion through the UI. Zero and negative `-1` quantities were rejected on the API 37 emulator.
 - No Espresso/instrumented tests have been added or run.
 
 ## Emulator state
@@ -40,7 +40,7 @@ Never fabricate: screenshots, commits or commit dates, test results, personal de
 
 ## Remaining work, in priority order
 1. Finish the remaining form edge tests; results are tracked in `docs/TESTING_CHECKLIST.md`.
-2. Review the genuine audit commits on GitHub; make further commits only for distinct real work. The public repository currently has fewer than the required 10 incremental commits; do not fabricate the missing history.
+2. Review the ten genuine incremental commits on GitHub and be ready to explain the changes. Do not fabricate any further history.
 3. Review `SmartPantryManager_Report_Draft.docx`, generated at the repository root with the 14 actual emulator screenshots in `docs/evidence/`. To regenerate it, install `docs\report-requirements.txt` and run `python docs\generate_report.py`. It still requires the student's actual identity and signed declaration, genuine challenges/reflection, citation/page-number review and a final proofread.
 4. The student must record the narrated 5–7 minute MP4 using `docs/DEMO_SCRIPT.md`; the assistant cannot supply the student's voice or personal GitHub-history claims.
 5. Package the full project source (excluding generated `build/` and `.gradle/` caches), final report, and MP4 in one ZIP named `Studentnumber_Surname_MobileAppDev700_Assignment.zip` (<= 50 MB).

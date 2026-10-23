@@ -4,7 +4,7 @@ Run these tests in Android Studio on an emulator or physical Android device. Mar
 
 ## Automated checks already run
 
-On 2026-10-23, `python docs\validate_project.py` exited 0 (21 XML files parsed, resource references checked, 20 recipe seeds found, Java-only source check and pure-Java normalizer smoke tests passed). `.\gradlew.bat testDebugUnitTest assembleDebug` exited 0; the JUnit report contains 14 tests, 0 failures, 0 errors and 0 skipped. `.\gradlew.bat lintDebug` exited 0, with 98 lint warnings.
+On 2026-10-23, `python docs\validate_project.py` exited 0 (21 XML files parsed, resource references checked, 20 recipe seeds found, Java-only source check and pure-Java normalizer smoke tests passed). `.\gradlew.bat testDebugUnitTest assembleDebug` exited 0; the JUnit report contains 16 tests, 0 failures, 0 errors and 0 skipped. `.\gradlew.bat lintDebug` exited 0, with 98 lint warnings.
 
 Manual observations were made on the `Medium_Phone_API_37.0` emulator. Fresh app data produced an empty pantry and a SQLite database containing 20 recipes, 84 recipe-ingredient rows, nonblank instructions for all 20 recipes, and no duplicate recipe names. A second app launch left those counts unchanged. The current emulator database contains test pantry rows for Tomato Egg Scramble, including two separate one-egg rows; clear app data before capturing a clean empty-pantry screenshot. The results below distinguish full observations from partial/unit-only checks; unobserved behavior remains **Not yet run**.
 
@@ -14,7 +14,7 @@ Manual observations were made on the `Medium_Phone_API_37.0` emulator. Fresh app
 | T02 | Open Suggested Recipes with empty pantry | Friendly no-match message; no recipe is suggested | Friendly no-match state observed with an empty pantry |
 | T03 | Add an ingredient with a valid name and positive quantity | Save returns to pantry list and the item appears | Added tomato, onion, salt and egg rows; each saved item appeared in the pantry. The separate `0.001 kg` display check also showed `0.001 kg` rather than `0 kg` |
 | T04 | Try saving with a blank name | Form validation blocks save and explains the field | Tapped Save with a blank name; form stayed open and focus returned to the name field |
-| T05 | Try quantity 0, a negative number or non-numeric input | Form validation blocks save | Quantity `0` was rejected and the form stayed open. The numeric keyboard did not accept alphabetic input in this run; automated text entry also failed to enter a minus sign reliably, so negative/non-numeric values remain unverified |
+| T05 | Try quantity 0, a negative number or non-numeric input | Form validation blocks save | Quantities `0` and `-1` were rejected and the form stayed open. The signed numeric keyboard exposed a minus key. Non-numeric UI entry remains unverified because the keyboard accepts numeric input only |
 | T06 | Enter malformed expiry date (for example `2026-15-40`) | Form blocks save and asks for `YYYY-MM-DD` | Entered `2026-15-40`; Save was blocked and the form remained open |
 | T07 | Edit an existing item name, quantity, unit or expiry date | List shows the updated values; no duplicate item is created | Edited tomato quantity from `120 g` to `100 g`, then `120 g` and `150 g`; each saved value affected matching as expected. The edit did not create an extra tomato row |
 | T08 | Delete an item and confirm | Item disappears from the pantry list | Deleted required salt; it disappeared and Tomato Egg Scramble was excluded |
