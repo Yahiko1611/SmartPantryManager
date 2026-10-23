@@ -14,7 +14,7 @@ Manual observations were made on the `Medium_Phone_API_37.0` emulator. Fresh app
 | T02 | Open Suggested Recipes with empty pantry | Friendly no-match message; no recipe is suggested | Friendly no-match state observed with an empty pantry |
 | T03 | Add an ingredient with a valid name and positive quantity | Save returns to pantry list and the item appears | Added tomato, onion, salt and egg rows; each saved item appeared in the pantry. The separate `0.001 kg` display check also showed `0.001 kg` rather than `0 kg` |
 | T04 | Try saving with a blank name | Form validation blocks save and explains the field | Tapped Save with a blank name; form stayed open and focus returned to the name field |
-| T05 | Try quantity 0, a negative number or non-numeric input | Form validation blocks save | Quantity `0` was rejected and the form stayed open. Negative and non-numeric quantities were not verified through the UI |
+| T05 | Try quantity 0, a negative number or non-numeric input | Form validation blocks save | Quantity `0` was rejected and the form stayed open. The numeric keyboard did not accept alphabetic input in this run; automated text entry also failed to enter a minus sign reliably, so negative/non-numeric values remain unverified |
 | T06 | Enter malformed expiry date (for example `2026-15-40`) | Form blocks save and asks for `YYYY-MM-DD` | Entered `2026-15-40`; Save was blocked and the form remained open |
 | T07 | Edit an existing item name, quantity, unit or expiry date | List shows the updated values; no duplicate item is created | Edited tomato quantity from `120 g` to `100 g`, then `120 g` and `150 g`; each saved value affected matching as expected. The edit did not create an extra tomato row |
 | T08 | Delete an item and confirm | Item disappears from the pantry list | Deleted required salt; it disappeared and Tomato Egg Scramble was excluded |
@@ -30,7 +30,7 @@ Manual observations were made on the `Medium_Phone_API_37.0` emulator. Fresh app
 | T18 | Change default unit in Settings, then add an item | Selected default is preselected; user can still change it | Set default to `kg`; it remained selected on reopening Settings and was preselected in Add Ingredient |
 | T19 | Enable/disable expiry alerts and create an item expiring within three days | Pantry warning appears only when alerts are enabled | With a test item expiring `2026-10-24`, the banner appeared when alerts were on, disappeared when off, and returned when re-enabled; the off preference persisted after reopening Settings |
 | T20 | Navigate using Pantry, Recipes and Settings buttons | Each navigation destination opens correctly | Pantry, Recipes, Settings and recipe detail navigation observed |
-| T21 | Rotate screen or background and return (if using device/emulator rotation) | No crash; saved database values remain intact | Force-stop/relaunch persistence was verified under T10. A confirmed screen rotation was not observed; rotation remains not yet run |
+| T21 | Rotate screen or background and return (if using device/emulator rotation) | No crash; saved database values remain intact | On the API 37 emulator, the display rotated to landscape (`rotation=1`) with `MainActivity` still resumed. After returning to portrait (`rotation=0`), the pantry still showed 7 saved ingredients; no crash observed |
 
 ## Critical strict-matching demonstration
 

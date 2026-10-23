@@ -21,7 +21,7 @@ Never fabricate: screenshots, commits or commit dates, test results, personal de
 - The SDK is configured in ignored, machine-local `local.properties`; no SDK path is committed.
 
 ## Not yet verified
-- Negative/non-numeric quantity validation, plural-name matching through the UI, unit conversion through the UI, and a confirmed rotation test.
+- Negative/non-numeric quantity validation, plural-name matching through the UI, and unit conversion through the UI.
 - No Espresso/instrumented tests have been added or run.
 
 ## Emulator state
@@ -39,7 +39,7 @@ Never fabricate: screenshots, commits or commit dates, test results, personal de
 - `hummus` and similar are stored unchanged; matching is consistent because both sides are normalised.
 
 ## Remaining work, in priority order
-1. Finish remaining form edge tests and verify a real rotation if feasible; mark results in `docs/TESTING_CHECKLIST.md`.
+1. Finish the remaining form edge tests; results are tracked in `docs/TESTING_CHECKLIST.md`.
 2. Review the genuine audit commits on GitHub; make further commits only for distinct real work. The public repository currently has fewer than the required 10 incremental commits; do not fabricate the missing history.
 3. Review `SmartPantryManager_Report_Draft.docx`, generated at the repository root with the 14 actual emulator screenshots in `docs/evidence/`. To regenerate it, install `docs\report-requirements.txt` and run `python docs\generate_report.py`. It still requires the student's actual identity and signed declaration, genuine challenges/reflection, citation/page-number review and a final proofread.
 4. The student must record the narrated 5–7 minute MP4 using `docs/DEMO_SCRIPT.md`; the assistant cannot supply the student's voice or personal GitHub-history claims.
