@@ -1,0 +1,14 @@
+<resources>
+    <!-- android:windowLightNavigationBar needs API 27; kept out of the base theme (minSdk 23). -->
+    <style name="Theme.SmartPantry" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/green_primary</item>
+        <item name="colorPrimaryDark">@color/green_dark</item>
+        <item name="colorAccent">@color/green_primary</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/green_mist</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowBackground">@color/green_mist</item>
+    </style>
+</resources>

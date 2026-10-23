@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="horizontal" android:paddingStart="12dp" android:paddingEnd="12dp"
+    android:paddingTop="8dp" android:paddingBottom="8dp" android:background="@color/white">
+    <Button android:id="@+id/btn_nav_pantry" android:layout_width="0dp" android:layout_height="48dp"
+        android:layout_weight="1" android:layout_marginEnd="5dp" android:text="Pantry"
+        android:textAllCaps="false" android:textColor="@color/green_primary" android:background="@drawable/bg_nav" android:minHeight="0dp" android:backgroundTint="@null" />
+    <Button android:id="@+id/btn_nav_recipes" android:layout_width="0dp" android:layout_height="48dp"
+        android:layout_weight="1" android:layout_marginStart="5dp" android:layout_marginEnd="5dp" android:text="Recipes"
+        android:textAllCaps="false" android:textColor="@color/green_primary" android:background="@drawable/bg_nav" android:minHeight="0dp" android:backgroundTint="@null" />
+    <Button android:id="@+id/btn_nav_settings" android:layout_width="0dp" android:layout_height="48dp"
+        android:layout_weight="1" android:layout_marginStart="5dp" android:text="Settings"
+        android:textAllCaps="false" android:textColor="@color/green_primary" android:background="@drawable/bg_nav" android:minHeight="0dp" android:backgroundTint="@null" />
+</LinearLayout>

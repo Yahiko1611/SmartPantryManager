@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+    android:padding="15dp" android:layout_marginBottom="10dp" android:background="@drawable/bg_card">
+    <TextView android:id="@+id/txt_ingredient_name" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Tomatoes" android:textSize="17sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+    <TextView android:id="@+id/txt_ingredient_quantity" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="250 g" android:textSize="14sp" android:textColor="@color/text_secondary" android:layout_marginTop="4dp" />
+    <TextView android:id="@+id/txt_ingredient_expiry" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Expires: 2026-10-22" android:textSize="12sp" android:textColor="@color/amber_text" android:layout_marginTop="5dp"
+        android:visibility="gone" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal"
+        android:gravity="end" android:layout_marginTop="9dp">
+        <Button android:id="@+id/btn_edit_item" android:layout_width="wrap_content" android:layout_height="38dp" android:text="Edit"
+            android:textAllCaps="false" android:textColor="@color/green_primary" android:background="@drawable/bg_button_secondary"
+            android:minHeight="0dp" android:paddingStart="18dp" android:paddingEnd="18dp" android:backgroundTint="@null" />
+        <Button android:id="@+id/btn_delete_item" android:layout_width="wrap_content" android:layout_height="38dp" android:text="Delete"
+            android:textAllCaps="false" android:textColor="@color/danger" android:background="@drawable/bg_nav"
+            android:layout_marginStart="8dp" android:minHeight="0dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:backgroundTint="@null" />
+    </LinearLayout>
+</LinearLayout>
