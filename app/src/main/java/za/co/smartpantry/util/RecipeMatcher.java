@@ -27,6 +27,7 @@ public final class RecipeMatcher {
     public static Map<String, Double> buildAvailable(List<Line> pantry) {
         Map<String, Double> available = new HashMap<>();
         for (Line item : pantry) {
+            if (item == null || !isValidQuantity(item.quantity)) continue;
             IngredientNormalizer.Measure m = IngredientNormalizer.toMeasure(item.quantity, item.unit);
             String key = IngredientNormalizer.normalizeName(item.name) + "|" + m.family;
             Double existing = available.get(key);
@@ -39,11 +40,19 @@ public final class RecipeMatcher {
     public static boolean canMake(Map<String, Double> available, List<Line> required) {
         if (required.isEmpty()) return false;
         for (Line need : required) {
+            if (need == null || !isValidQuantity(need.quantity)) return false;
             IngredientNormalizer.Measure m = IngredientNormalizer.toMeasure(need.quantity, need.unit);
             String key = IngredientNormalizer.normalizeName(need.name) + "|" + m.family;
             Double have = available.get(key);
-            if (have == null || have + 0.000001 < m.baseQuantity) return false; // missing/short => reject whole recipe
+            if (have == null || !Double.isFinite(have) || have < 0
+                    || !Double.isFinite(m.baseQuantity) || have + 0.000001 < m.baseQuantity) {
+                return false; // missing, invalid or short stock rejects the whole recipe
+            }
         }
         return true;
+    }
+
+    private static boolean isValidQuantity(double quantity) {
+        return Double.isFinite(quantity) && quantity > 0;
     }
 }
