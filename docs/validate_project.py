@@ -16,8 +16,10 @@ for f in root.joinpath('app/src/main/res').rglob('*'):
                 for el in rt:
                     if el.tag in known and el.attrib.get('name'): known[el.tag].add(el.attrib['name'])
             except Exception: pass
-        elif f.parent.name in known:
-            known[f.parent.name].add(f.stem)
+        else:
+            res_type = f.parent.name.split('-')[0]
+            if res_type in known:
+                known[res_type].add(f.stem)
         if f.suffix == '.xml':
             for rid in re.findall(r'@\+id/([A-Za-z0-9_]+)', f.read_text(errors='ignore')):
                 known['id'].add(rid)
