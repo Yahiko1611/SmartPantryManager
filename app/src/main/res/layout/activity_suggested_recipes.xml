@@ -27,6 +27,9 @@
             <TextView android:text="Add more ingredients or increase a quantity. Recipes missing even one required ingredient stay out of this list."
                 android:textSize="14sp" android:textColor="@color/text_secondary" android:gravity="center" android:layout_marginTop="9dp"
                 android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <TextView android:text="Tip: use the same names and units as the recipes (e.g. tomato in g, egg in pcs)."
+                android:textSize="13sp" android:textColor="@color/green_primary" android:gravity="center" android:layout_marginTop="12dp"
+                android:layout_width="match_parent" android:layout_height="wrap_content" />
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>

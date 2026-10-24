@@ -19,6 +19,8 @@ import za.co.smartpantry.data.DatabaseHelper;
 import za.co.smartpantry.model.PantryItem;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements PantryAdapter.Listener {
     private DatabaseHelper database;
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.Lis
     private RecyclerView recycler;
     private View emptyState;
     private TextView itemCount, expiryBanner;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor(); // Offload database operations off the main thread to prevent UI ANR
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,27 +52,34 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.Lis
     }
 
     private void refreshPantry() {
-        List<PantryItem> items = database.getAllPantryItems();
-        adapter.setItems(items);
-        itemCount.setText(items.size() + (items.size() == 1 ? " ingredient saved" : " ingredients saved"));
-        boolean isEmpty = items.isEmpty();
-        emptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-        recycler.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        executorService.execute(() -> {
+            List<PantryItem> items = database.getAllPantryItems();
+            SharedPreferences preferences = getSharedPreferences("pantry_settings", MODE_PRIVATE);
+            boolean alertsEnabled = preferences.getBoolean("expiry_alerts", true);
+            List<PantryItem> expiring = alertsEnabled ? database.getItemsExpiringWithinDays(3) : java.util.Collections.emptyList();
+            
+            if (isFinishing() || isDestroyed()) return;
+            runOnUiThread(() -> {
+                if (isFinishing() || isDestroyed()) return;
+                adapter.setItems(items);
+                itemCount.setText(items.size() + (items.size() == 1 ? " ingredient saved" : " ingredients saved"));
+                boolean isEmpty = items.isEmpty();
+                emptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+                recycler.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
-        SharedPreferences preferences = getSharedPreferences("pantry_settings", MODE_PRIVATE);
-        boolean alertsEnabled = preferences.getBoolean("expiry_alerts", true);
-        List<PantryItem> expiring = alertsEnabled ? database.getItemsExpiringWithinDays(3) : java.util.Collections.emptyList();
-        if (expiring.isEmpty()) {
-            expiryBanner.setVisibility(View.GONE);
-        } else {
-            StringBuilder names = new StringBuilder();
-            for (PantryItem item : expiring) {
-                if (names.length() > 0) names.append(", ");
-                names.append(item.getName());
-            }
-            expiryBanner.setText("Use soon: " + names + " " + (expiring.size() == 1 ? "expires" : "expire") + " within 3 days.");
-            expiryBanner.setVisibility(View.VISIBLE);
-        }
+                if (expiring.isEmpty()) {
+                    expiryBanner.setVisibility(View.GONE);
+                } else {
+                    StringBuilder names = new StringBuilder();
+                    for (PantryItem item : expiring) {
+                        if (names.length() > 0) names.append(", ");
+                        names.append(item.getName());
+                    }
+                    expiryBanner.setText("Use soon: " + names + " " + (expiring.size() == 1 ? "expires" : "expire") + " within 3 days.");
+                    expiryBanner.setVisibility(View.VISIBLE);
+                }
+            });
+        });
     }
 
     @Override public void onEdit(PantryItem item) {
@@ -84,14 +94,30 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.Lis
                 .setMessage("Remove " + item.getName() + " from your pantry?")
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    database.deletePantryItem(item.getId());
-                    refreshPantry();
-                    Toast.makeText(this, "Ingredient deleted", Toast.LENGTH_SHORT).show();
+                    executorService.execute(() -> {
+                        try {
+                            database.deletePantryItem(item.getId());
+                            if (isFinishing() || isDestroyed()) return;
+                            runOnUiThread(() -> {
+                                if (isFinishing() || isDestroyed()) return;
+                                refreshPantry();
+                                Toast.makeText(this, "Ingredient deleted", Toast.LENGTH_SHORT).show();
+                            });
+                        } catch (RuntimeException exception) {
+                            if (isFinishing() || isDestroyed()) return;
+                            runOnUiThread(() -> {
+                                if (isFinishing() || isDestroyed()) return;
+                                Toast.makeText(this, "Could not delete ingredient", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
                 }).show();
     }
 
     @Override protected void onDestroy() {
-        if (database != null) database.close();
+        // Ensure database closes after pending background writes finish
+        executorService.execute(database::close);
+        executorService.shutdown();
         super.onDestroy();
     }
 }

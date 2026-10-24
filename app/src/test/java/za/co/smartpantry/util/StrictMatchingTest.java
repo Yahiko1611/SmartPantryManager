@@ -59,6 +59,17 @@ public class StrictMatchingTest {
     @Test public void emptyRequirementListNeverMatches() {
         assertFalse(can(Arrays.asList(l("egg", 2, "pcs"))));
     }
+    @Test public void invalidPantryQuantitiesNeverSatisfyRequirements() {
+        assertFalse(can(Arrays.asList(l("egg", Double.NaN, "pcs")), l("egg", 1, "pcs")));
+        assertFalse(can(Arrays.asList(l("egg", Double.POSITIVE_INFINITY, "pcs")), l("egg", 1, "pcs")));
+        assertFalse(can(Arrays.asList(l("egg", -1, "pcs")), l("egg", 1, "pcs")));
+    }
+    @Test public void invalidRequirementQuantitiesNeverMatch() {
+        List<Line> pantry = Arrays.asList(l("egg", 2, "pcs"));
+        assertFalse(can(pantry, l("egg", Double.NaN, "pcs")));
+        assertFalse(can(pantry, l("egg", Double.POSITIVE_INFINITY, "pcs")));
+        assertFalse(can(pantry, l("egg", -1, "pcs")));
+    }
 
     @Test public void normalisation() {
         assertEquals("tomato", IngredientNormalizer.normalizeName("Tomatoes"));

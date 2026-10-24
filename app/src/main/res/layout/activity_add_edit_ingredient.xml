@@ -22,7 +22,7 @@
             <TextView android:text="Quantity" android:textSize="14sp" android:textStyle="bold" android:textColor="@color/text_primary"
                 android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" />
             <EditText android:id="@+id/input_ingredient_quantity" android:layout_width="match_parent" android:layout_height="52dp"
-                android:hint="e.g. 250" android:singleLine="true" android:inputType="numberDecimal" android:paddingStart="12dp"
+                android:hint="e.g. 250" android:singleLine="true" android:inputType="numberDecimal|numberSigned" android:paddingStart="12dp"
                 android:paddingEnd="12dp" android:layout_marginTop="7dp" android:background="@drawable/bg_nav" />
             <TextView android:text="Unit" android:textSize="14sp" android:textStyle="bold" android:textColor="@color/text_primary"
                 android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" />

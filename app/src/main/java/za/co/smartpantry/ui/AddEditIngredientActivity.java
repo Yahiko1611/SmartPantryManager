@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AddEditIngredientActivity extends AppCompatActivity {
     public static final String EXTRA_ITEM_ID = "item_id";
@@ -32,6 +34,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     private EditText nameInput, quantityInput, expiryInput;
     private Spinner unitSpinner;
     private long itemId = -1L;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor(); // Offload database read/write operations off the main thread to prevent ANR
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,18 +58,22 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             title.setText("Edit ingredient");
             Button save = findViewById(R.id.btn_save_ingredient);
             save.setText("Update ingredient");
-            PantryItem item = database.getPantryItem(itemId);
-            if (item == null) {
-                Toast.makeText(this, "Ingredient could not be found", Toast.LENGTH_SHORT).show();
-                finish();
-                return;
-            }
-            {
-                nameInput.setText(item.getName());
-                quantityInput.setText(PantryAdapter.formatQuantity(item.getQuantity()));
-                selectUnit(item.getUnit());
-                if (item.getExpiryDate() != null) expiryInput.setText(item.getExpiryDate());
-            }
+            executorService.execute(() -> {
+                PantryItem item = database.getPantryItem(itemId);
+                if (isFinishing() || isDestroyed()) return;
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    if (item == null) {
+                        Toast.makeText(this, "Ingredient could not be found", Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                    nameInput.setText(item.getName());
+                    quantityInput.setText(PantryAdapter.formatQuantity(item.getQuantity()));
+                    selectUnit(item.getUnit());
+                    if (item.getExpiryDate() != null) expiryInput.setText(item.getExpiryDate());
+                });
+            });
         }
 
         findViewById(R.id.btn_pick_expiry).setOnClickListener(v -> showDatePicker());
@@ -137,18 +144,37 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             }
         }
 
-        try {
-            if (itemId >= 0) {
-                database.updatePantryItem(itemId, name, quantity, unit, expiry);
-                Toast.makeText(this, "Ingredient updated", Toast.LENGTH_SHORT).show();
-            } else {
-                database.insertPantryItem(name, quantity, unit, expiry);
-                Toast.makeText(this, "Ingredient saved", Toast.LENGTH_SHORT).show();
+        Button saveBtn = findViewById(R.id.btn_save_ingredient);
+        saveBtn.setEnabled(false);
+
+        executorService.execute(() -> {
+            try {
+                if (itemId >= 0) {
+                    database.updatePantryItem(itemId, name, quantity, unit, expiry);
+                    if (isFinishing() || isDestroyed()) return;
+                    runOnUiThread(() -> {
+                        if (isFinishing() || isDestroyed()) return;
+                        Toast.makeText(this, "Ingredient updated", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                } else {
+                    database.insertPantryItem(name, quantity, unit, expiry);
+                    if (isFinishing() || isDestroyed()) return;
+                    runOnUiThread(() -> {
+                        if (isFinishing() || isDestroyed()) return;
+                        Toast.makeText(this, "Ingredient saved", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                }
+            } catch (RuntimeException exception) {
+                if (isFinishing() || isDestroyed()) return;
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    saveBtn.setEnabled(true);
+                    Toast.makeText(this, "Could not save ingredient. Please check the details and try again.", Toast.LENGTH_LONG).show();
+                });
             }
-            finish();
-        } catch (RuntimeException exception) {
-            Toast.makeText(this, "Could not save ingredient. Please check the details and try again.", Toast.LENGTH_LONG).show();
-        }
+        });
     }
 
     private Date parseDate(String value) throws ParseException {
@@ -160,7 +186,9 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     }
 
     @Override protected void onDestroy() {
-        if (database != null) database.close();
+        // Ensure database closes after pending background writes finish
+        executorService.execute(database::close);
+        executorService.shutdown();
         super.onDestroy();
     }
 }

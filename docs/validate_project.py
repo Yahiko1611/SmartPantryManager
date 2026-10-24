@@ -1,7 +1,8 @@
 from pathlib import Path
 import re, xml.etree.ElementTree as ET, subprocess, tempfile, textwrap
 root=Path(__file__).resolve().parents[1]
-xmls=list(root.rglob('*.xml'))
+generated_dirs={'.gradle','build'}
+xmls=[f for f in root.rglob('*.xml') if not generated_dirs.intersection(f.relative_to(root).parts)]
 for f in xmls:
     ET.parse(f)
 print(f'XML parse: {len(xmls)} files passed')
@@ -15,8 +16,10 @@ for f in root.joinpath('app/src/main/res').rglob('*'):
                 for el in rt:
                     if el.tag in known and el.attrib.get('name'): known[el.tag].add(el.attrib['name'])
             except Exception: pass
-        elif f.parent.name in known:
-            known[f.parent.name].add(f.stem)
+        else:
+            res_type = f.parent.name.split('-')[0]
+            if res_type in known:
+                known[res_type].add(f.stem)
         if f.suffix == '.xml':
             for rid in re.findall(r'@\+id/([A-Za-z0-9_]+)', f.read_text(errors='ignore')):
                 known['id'].add(rid)
@@ -37,7 +40,7 @@ print(f'Resource references: {len(java_files)} Java files passed')
 seed_count=len(re.findall(r'new SeedRecipe\(', root.joinpath('app/src/main/java/za/co/smartpantry/data/DatabaseHelper.java').read_text()))
 assert seed_count==20, seed_count
 print(f'Recipe seed count: {seed_count}')
-assert len(list(root.rglob('*.kt')))==0
+assert len(list(root.joinpath('app/src').rglob('*.kt')))==0
 print('Java-only source: passed')
 # Compile and execute the standalone ingredient normalizer class.
 normalizer=root/'app/src/main/java/za/co/smartpantry/util/IngredientNormalizer.java'
